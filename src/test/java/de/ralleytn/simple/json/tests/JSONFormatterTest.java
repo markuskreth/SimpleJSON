@@ -201,74 +201,118 @@
  *    See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.ralleytn.simple.json;
+package de.ralleytn.simple.json.tests;
 
-/*
- * @author FangYidong(fangyidong@yahoo.com.cn)
- * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
- * @since 1.0.0
- */
-class Yytoken {
-	
-	static final int TYPE_VALUE = 0;
-	static final int TYPE_LEFT_BRACE = 1;
-	static final int TYPE_RIGHT_BRACE = 2;
-	static final int TYPE_LEFT_SQUARE = 3;
-	static final int TYPE_RIGHT_SQUARE = 4;
-	static final int TYPE_COMMA = 5;
-	static final int TYPE_COLON = 6;
-	static final int TYPE_EOF = -1;
-	
-	int type;
-	Object value;
-	
-	Yytoken(int type, Object value) {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import org.junit.jupiter.api.Test;
+
+import de.ralleytn.simple.json.JSONFormatter;
+
+class JSONFormatterTest {
+
+	private static final void testMinimize(String formatted, String message) {
 		
-		this.type = type;
-		this.value = value;
+		// Test minimize(String)
+		assertEquals(TestUtil.JSON_MINIMIZED, new JSONFormatter().minimize(formatted));
+		
+		// Test minimize(Reader,Writer)
+		try(StringReader reader = new StringReader(formatted)) {
+			
+			try(StringWriter writer = new StringWriter()) {
+				
+				new JSONFormatter().minimize(reader, writer);
+				assertEquals(TestUtil.JSON_MINIMIZED, writer.toString(), message);
+				
+			} catch(IOException exception) {
+				
+				fail(exception);
+			}
+		}
 	}
 	
-	@Override
-	public String toString() {
+	private static final void printError(String expected, String result) {
 		
-		StringBuilder builder = new StringBuilder();
-		
-		switch(this.type){
-		
-			case TYPE_VALUE:
-				builder.append("VALUE(").append(this.value).append(")");
-				break;
+		for(int index = 0; index < (result.length() < expected.length() ? result.length() : expected.length()); index++) {
+			
+			if(result.charAt(index) != expected.charAt(index)) {
 				
-			case TYPE_LEFT_BRACE:
-				builder.append("LEFT BRACE({)");
-				break;
-				
-			case TYPE_RIGHT_BRACE:
-				builder.append("RIGHT BRACE(})");
-				break;
-				
-			case TYPE_LEFT_SQUARE:
-				builder.append("LEFT SQUARE([)");
-				break;
-				
-			case TYPE_RIGHT_SQUARE:
-				builder.append("RIGHT SQUARE(])");
-				break;
-				
-			case TYPE_COMMA:
-				builder.append("COMMA(,)");
-				break;
-				
-			case TYPE_COLON:
-				builder.append("COLON(:)");
-				break;
-				
-			case TYPE_EOF:
-				builder.append("END OF FILE");
-				break;
+				System.err.println("The expected result and the actual result are unqual at index " + index + "!");
+				System.err.println(result.substring(0, result.length() - index + 1));
+			}
 		}
+	}
+	
+	private static final void testFormat(String expected, String message, boolean crlf, boolean tabs, int indent) {
 		
-		return builder.toString();
+		// Test the JSONFormatter setters and getters
+		JSONFormatter formatter = new JSONFormatter();
+		formatter.setIndent(indent);
+		formatter.setUseCRLF(crlf);
+		formatter.setUseTabs(tabs);
+		
+		assertEquals(indent, formatter.getIndent(), "Either setIndent(int) or getIndent() doesn't work!");
+		assertEquals(crlf, formatter.usesCRLF(), "Either setUseCRLF(boolean) or usesCRLF() doesn't work!");
+		assertEquals(tabs, formatter.usesTabs(), "Either setUseTabs(boolean) or usesTabs() doesn't work!");
+		
+		// Test format(String)
+		String result = formatter.format(TestUtil.JSON_MINIMIZED);
+		printError(expected, result);
+		assertEquals(expected, result, message);
+		
+		// Test format(Reader,Writer)
+		try(StringReader reader = new StringReader(TestUtil.JSON_MINIMIZED)) {
+			
+			try(StringWriter writer = new StringWriter()) {
+				
+				formatter.format(reader, writer);
+				result = writer.toString();
+				printError(expected, result);
+				assertEquals(expected, result, message);
+				
+			} catch(IOException exception) {
+				
+				fail(exception);
+			}
+		}
+	}
+	
+	@Test
+	public void testFormat() {
+
+		// ==== 17.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// This method calls assert and fail implicitly.
+		// Codacy tells bullshit on this one.
+		// ====
+		
+		testFormat(TestUtil.JSON_FORMATTED_NORMAL, "JSON_FORMATTED_NORMAL", false, true, 1);
+		testFormat(TestUtil.JSON_FORMATTED_CRLF, "JSON_FORMATTED_CRLF", true, true, 1);
+		testFormat(TestUtil.JSON_FORMATTED_I2, "JSON_FORMATTED_I2", false, true, 2);
+		testFormat(TestUtil.JSON_FORMATTED_SPACE, "JSON_FORMATTED_SPACE", false, false, 1);
+		testFormat(TestUtil.JSON_FORMATTED_SPACE_I2, "JSON_FORMATTED_SPACE_I2", false, false, 2);
+		testFormat(TestUtil.JSON_FORMATTED_SPACE_CRLF, "JSON_FORMATTED_SPACE_CRLF", true, false, 1);
+		testFormat(TestUtil.JSON_FORMATTED_SPACE_CRLF_I2, "JSON_FORMATTED_SPACE_CRLF_I2", true, false, 2);
+	}
+	
+	@Test
+	public void testMinimize() {
+		
+		// ==== 17.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// This method calls assert and fail implicitly.
+		// Codacy tells bullshit on this one.
+		// ====
+		
+		testMinimize(TestUtil.JSON_FORMATTED_NORMAL, "JSON_FORMATTED_NORMAL");
+		testMinimize(TestUtil.JSON_FORMATTED_CRLF, "JSON_FORMATTED_CRLF");
+		testMinimize(TestUtil.JSON_FORMATTED_I2, "JSON_FORMATTED_I2");
+		testMinimize(TestUtil.JSON_FORMATTED_SPACE, "JSON_FORMATTED_SPACE");
+		testMinimize(TestUtil.JSON_FORMATTED_SPACE_I2, "JSON_FORMATTED_SPACE_I2");
+		testMinimize(TestUtil.JSON_FORMATTED_SPACE_CRLF, "JSON_FORMATTED_SPACE_CRLF");
+		testMinimize(TestUtil.JSON_FORMATTED_SPACE_CRLF_I2, "JSON_FORMATTED_SPACE_CRLF_I2");
 	}
 }

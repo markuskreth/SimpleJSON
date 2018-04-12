@@ -201,7 +201,7 @@
  *    See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.ralleytn.simple.json;
+package de.ralleytn.simple.json.serialization;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -211,11 +211,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import de.ralleytn.simple.json.JSONArray;
+import de.ralleytn.simple.json.JSONObject;
+
 /**
  * Provides static methods which allow you to convert Java objects into {@linkplain JSONObject}s
  * and the other way around.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 2.0.0
  * @since 1.0.0
  */
 public final class JSONSerializer {
@@ -229,6 +232,7 @@ public final class JSONSerializer {
 	 * @throws Exception if an error occurs
 	 * @since 1.0.0
 	 */
+	@SuppressWarnings("unchecked")
 	public static final void deserialize(JSONObject json, Object object) throws Exception {
 		
 		Class<?> clazz = object.getClass();
@@ -287,21 +291,19 @@ public final class JSONSerializer {
 						
 					} else if(targetType.getAnnotation(JSONRoot.class) != null) {
 						
-						Object newObject = targetType.newInstance();
+						Object newObject = targetType.getDeclaredConstructor().newInstance();
 						JSONSerializer.deserialize((JSONObject)value, newObject);
 						field.set(object, newObject);
 						
 					} else if(Map.class.isAssignableFrom(targetType)) {
 						
-						@SuppressWarnings("unchecked")
-						Map<Object, Object> map = (Map<Object, Object>)targetType.newInstance();
+						Map<Object, Object> map = (Map<Object, Object>)targetType.getDeclaredConstructor().newInstance();
 						JSONSerializer.deserialize(clazz, object, map, (JSONObject)value);
 						field.set(object, map);
 						
 					} else if(Collection.class.isAssignableFrom(targetType)) {
 						
-						@SuppressWarnings("unchecked")
-						Collection<Object> collection = (Collection<Object>)targetType.newInstance();
+						Collection<Object> collection = (Collection<Object>)targetType.getDeclaredConstructor().newInstance();
 						JSONSerializer.deserialize(clazz, object, collection, (JSONArray)value);
 						field.set(object, collection);
 						
@@ -326,6 +328,12 @@ public final class JSONSerializer {
 			if(!Modifier.isTransient(method.getModifiers()) && annotation != null && JSONSerializer.contains(JSONAttribute.Type.SETTER, annotation)) {
 				
 				Class<?> targetType = method.getParameterTypes()[0];
+				
+				if(targetType.isInterface()) {
+					
+					throw new Exception("Cannot deserialize an interface! Method: " + method.getName() + ", Interface: " + targetType.getName());
+				}
+				
 				Object value = json.get(annotation.name());
 				
 				if(value != null) {
@@ -371,21 +379,19 @@ public final class JSONSerializer {
 						
 					} else if(targetType.getAnnotation(JSONRoot.class) != null) {
 						
-						Object newObject = targetType.newInstance();
+						Object newObject = targetType.getDeclaredConstructor().newInstance();
 						JSONSerializer.deserialize((JSONObject)value, newObject);
 						method.invoke(object, newObject);
 						
 					} else if(Map.class.isAssignableFrom(targetType)) {
 						
-						@SuppressWarnings("unchecked")
-						Map<Object, Object> map = (Map<Object, Object>)targetType.newInstance();
+						Map<Object, Object> map = (Map<Object, Object>)targetType.getDeclaredConstructor().newInstance();
 						JSONSerializer.deserialize(clazz, object, map, (JSONObject)value);
 						method.invoke(object, map);
 						
 					} else if(Collection.class.isAssignableFrom(targetType)) {
 						
-						@SuppressWarnings("unchecked")
-						Collection<Object> collection = (Collection<Object>)targetType.newInstance();
+						Collection<Object> collection = (Collection<Object>)targetType.getDeclaredConstructor().newInstance();
 						JSONSerializer.deserialize(clazz, object, collection, (JSONArray)value);
 						method.invoke(object, collection);
 						
@@ -404,6 +410,7 @@ public final class JSONSerializer {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static final void deserialize(Class<?> clazz, Object classObject, Collection<Object> collection, JSONArray json) throws Exception {
 		
 		for(Object value : json) {
@@ -411,6 +418,11 @@ public final class JSONSerializer {
 			if(value != null) {
 				
 				Class<?> type = value.getClass();
+				
+				if(type.isInterface()) {
+					
+					throw new Exception("Cannot deserialize an interface! Interface: " + type.getName());
+				}
 				
 				if(float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type)) {
 					
@@ -453,21 +465,19 @@ public final class JSONSerializer {
 					
 				} else if(type.getAnnotation(JSONRoot.class) != null) {
 					
-					Object newObject = type.newInstance();
+					Object newObject = type.getDeclaredConstructor().newInstance();
 					JSONSerializer.deserialize((JSONObject)value, newObject);
 					collection.add(newObject);
 					
 				} else if(Map.class.isAssignableFrom(type)) {
 					
-					@SuppressWarnings("unchecked")
-					Map<Object, Object> newMap = (Map<Object, Object>)type.newInstance();
+					Map<Object, Object> newMap = (Map<Object, Object>)type.getDeclaredConstructor().newInstance();
 					JSONSerializer.deserialize(clazz, classObject, newMap, (JSONObject)value);
 					collection.add(newMap);
 					
 				} else if(Collection.class.isAssignableFrom(type)) {
-					
-					@SuppressWarnings("unchecked")
-					Collection<Object> newCollection = (Collection<Object>)type.newInstance();
+
+					Collection<Object> newCollection = (Collection<Object>)type.getDeclaredConstructor().newInstance();
 					JSONSerializer.deserialize(clazz, classObject, newCollection, (JSONArray)value);
 					collection.add(newCollection);
 					
@@ -489,6 +499,7 @@ public final class JSONSerializer {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static final void deserialize(Class<?> clazz, Object classObject, Map<Object, Object> map, JSONObject json) throws Exception {
 
 		for(Object jsonEntry : json.entrySet()) {
@@ -499,6 +510,11 @@ public final class JSONSerializer {
 			if(value != null) {
 				
 				Class<?> type = value.getClass();
+				
+				if(type.isInterface()) {
+					
+					throw new Exception("Cannot deserialize an interface! Interface: " + type.getName());
+				}
 				
 				if(float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type)) {
 					
@@ -541,21 +557,19 @@ public final class JSONSerializer {
 					
 				} else if(type.getAnnotation(JSONRoot.class) != null) {
 					
-					Object newObject = type.newInstance();
+					Object newObject = type.getDeclaredConstructor().newInstance();
 					JSONSerializer.deserialize((JSONObject)value, newObject);
 					map.put(entry.getKey(), newObject);
 					
 				} else if(Map.class.isAssignableFrom(type)) {
 					
-					@SuppressWarnings("unchecked")
-					Map<Object, Object> newMap = (Map<Object, Object>)type.newInstance();
+					Map<Object, Object> newMap = (Map<Object, Object>)type.getDeclaredConstructor().newInstance();
 					JSONSerializer.deserialize(clazz, classObject, newMap, (JSONObject)value);
 					map.put(entry.getKey(), newMap);
 					
 				} else if(Collection.class.isAssignableFrom(type)) {
 					
-					@SuppressWarnings("unchecked")
-					Collection<Object> collection = (Collection<Object>)type.newInstance();
+					Collection<Object> collection = (Collection<Object>)type.getDeclaredConstructor().newInstance();
 					JSONSerializer.deserialize(clazz, classObject, collection, (JSONArray)value);
 					map.put(entry.getKey(), collection);
 					
@@ -577,9 +591,15 @@ public final class JSONSerializer {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static final void deserialize(Class<?> clazz, Object classObject, Object targetObject, JSONArray json) throws Exception {
 
 		Class<?> type = targetObject.getClass().getComponentType();
+		
+		if(type.isInterface()) {
+			
+			throw new Exception("Cannot deserialize an interface! Interface: " + type.getName());
+		}
 		
 		for(int index = 0; index < json.size(); index++) {
 			
@@ -626,21 +646,19 @@ public final class JSONSerializer {
 				
 			} else if(type.getAnnotation(JSONRoot.class) != null) {
 				
-				Object newObject = type.newInstance();
+				Object newObject = type.getDeclaredConstructor().newInstance();
 				JSONSerializer.deserialize((JSONObject)value, newObject);
 				Array.set(targetObject, index, newObject);
 				
 			} else if(Map.class.isAssignableFrom(type)) {
 				
-				@SuppressWarnings("unchecked")
-				Map<Object, Object> map = (Map<Object, Object>)type.newInstance();
+				Map<Object, Object> map = (Map<Object, Object>)type.getDeclaredConstructor().newInstance();
 				JSONSerializer.deserialize(clazz, classObject, map, (JSONObject)value);
 				Array.set(targetObject, index, map);
 				
 			} else if(Collection.class.isAssignableFrom(type)) {
 				
-				@SuppressWarnings("unchecked")
-				Collection<Object> collection = (Collection<Object>)type.newInstance();
+				Collection<Object> collection = (Collection<Object>)type.getDeclaredConstructor().newInstance();
 				JSONSerializer.deserialize(clazz, classObject, collection, (JSONArray)value);
 				Array.set(targetObject, index, collection);
 				
@@ -696,7 +714,12 @@ public final class JSONSerializer {
 	
 	private static final void serialize(JSONObject json, Class<?> clazz, Object classObject, Class<?> type, Object value, JSONAttribute annotation) throws Exception {
 		
-		       if(value instanceof String || value instanceof Number || value instanceof Boolean) {json.put(annotation.name(), value);
+		// ==== 17.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// -	Numbers now always get converted to longs
+		// ====
+		
+		       if(value instanceof String || value instanceof Boolean) {json.put(annotation.name(), value);
+		} else if(value instanceof Number) {json.put(annotation.name(), value != null ? ((Number)value).longValue() : null);
 		} else if(value instanceof boolean[]) {json.put(annotation.name(), new JSONArray((boolean[])value));
 		} else if(value instanceof byte[]) {json.put(annotation.name(), new JSONArray((byte[])value));
 		} else if(value instanceof short[]) {json.put(annotation.name(), new JSONArray((short[])value));
@@ -814,7 +837,7 @@ public final class JSONSerializer {
 		
 		for(JSONAttribute.Type value : attribute.type()) {
 			
-			if(type == value) {
+			if(value.equals(type)) {
 				
 				return true;
 			}

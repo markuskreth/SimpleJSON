@@ -213,17 +213,26 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
+
+import de.ralleytn.simple.json.internal.Util;
 
 /**
  * Represents a JSON array.
  * @author FangYidong(fangyidong@yahoo.com.cn)
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.1.0
+ * @version 2.0.0
  * @since 1.0.0
  */
-public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStreamAware {
+public class JSONArray extends ArrayList<Object> {
+	
+	// ==== 11.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+	// -	Removed the interfaces JSONAware and JSONStreamAware
+	// -	Moved all static "writeJSONString" methods to the Util class
+	// -	Removed all "toJSONString" methods
+	// -	Renamed the "writeJSONString" method to simply "write"
+	// -	Updated documentation
+	// ====
 	
 	private static final long serialVersionUID = 3957988303675231981L;
 	
@@ -231,12 +240,11 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 * Constructs an empty {@linkplain JSONArray}.
 	 * @since 1.0.0
 	 */
-	public JSONArray(){}
+	public JSONArray() {}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified
-	 * {@linkplain Collection}, in the order they are returned by the {@linkplain Collection}'s {@linkplain Iterator}.
-	 * @param collection the {@linkplain Collection} whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given {@linkplain Collection}.
+	 * @param collection the {@linkplain Collection}
 	 * @since 1.0.0
 	 */
 	public JSONArray(Collection<?> collection){
@@ -245,9 +253,9 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
-	 * @param <T> the generic type of the given array
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
+	 * @param <T> the array type
 	 * @since 1.0.0
 	 */
 	public <T>JSONArray(T[] array) {
@@ -259,8 +267,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(byte[] array) {
@@ -272,8 +280,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(boolean[] array) {
@@ -285,8 +293,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(char[] array) {
@@ -298,8 +306,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(short[] array) {
@@ -311,8 +319,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(int[] array) {
@@ -324,8 +332,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(long[] array) {
@@ -337,8 +345,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(float[] array) {
@@ -350,8 +358,8 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(double[] array) {
@@ -363,25 +371,33 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} containing the elements of the specified array.
+	 * Constructs a {@linkplain JSONArray} with the elements of the given array.
 	 * This constructor is a little slower than the others because it uses the Reflection API.
-	 * @param array the array whose elements are to be placed into this {@linkplain JSONArray}
+	 * @param array the array
 	 * @since 1.0.0
 	 */
 	public JSONArray(Object array) {
 		
-		int length = Array.getLength(array);
+		// ==== 11.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// -	Will no longer throw an exception if an object that isn't an array is given.
+		//		An empty array will be constructed instead.
+		// ====
 		
-		for(int index = 0; index < length; index++) {
+		if(array != null && array.getClass().isArray()) {
 			
-			this.add(Array.get(array, index));
+			int length = Array.getLength(array);
+			
+			for(int index = 0; index < length; index++) {
+				
+				this.add(Array.get(array, index));
+			}
 		}
 	}
 	
 	/**
-	 * Constructs a {@linkplain JSONArray} from JSON data.
-	 * @param json the JSON data
-	 * @throws JSONParseException if the JSON data is invalid
+	 * Constructs a {@linkplain JSONArray} from a JSON string.
+	 * @param json the JSON string
+	 * @throws JSONParseException if the JSON is invalid
 	 * @since 1.0.0
 	 */
 	public JSONArray(String json) throws JSONParseException {
@@ -391,589 +407,102 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	
 	/**
 	 * Constructs a {@linkplain JSONArray} from JSON data read from a {@linkplain Reader}.
-	 * @param jsonReader the {@linkplain Reader} with the JSON data
-	 * @throws JSONParseException if the JSON data is invalid
+	 * @param reader the {@linkplain Reader}
+	 * @throws JSONParseException if the JSON is invalid
 	 * @throws IOException if an I/O error occurred
 	 * @since 1.0.0
 	 */
-	public JSONArray(Reader jsonReader) throws JSONParseException, IOException {
+	public JSONArray(Reader reader) throws JSONParseException, IOException {
 		
-		super((JSONArray)new JSONParser().parse(jsonReader));
+		super((JSONArray)new JSONParser().parse(reader));
 	}
 	
-    /**
-     * Encode a {@linkplain Collection} into JSON text and write it to a {@linkplain Writer}. 
-     * If this list is also a {@linkplain JSONStreamAware} or a {@linkplain JSONAware}, {@linkplain JSONStreamAware} and {@linkplain JSONAware} specific behaviors will be ignored at this top level.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param collection the {@linkplain Collection} which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(Collection<?> collection, Writer writer) throws IOException {
+	/**
+	 * Writes this {@linkplain JSONArray} as a JSON string on the given {@linkplain Writer}.
+	 * @param writer the {@linkplain Writer}
+	 * @throws IOException if an I/O error occurred
+	 * @since 1.0.0
+	 */
+	public void write(Writer writer) throws IOException {
 		
-		if(collection != null) {
-			
-			boolean first = true;
-			Iterator<?> iterator = collection.iterator();
-	        writer.write('[');
-	        
-			while(iterator.hasNext()) {
-				
-	            if(first) {
-	            	
-	                first = false;
-	                
-	            } else {
-	            	
-	                writer.write(',');
-	            }
-	            
-				Object value = iterator.next();
-				
-				if(value == null) {
-					
-					writer.write("null");
-					
-				} else {
-					
-					JSONValue.writeJSONString(value, writer);
-				}
-			}
-			
-			writer.write(']');
-			
-		} else {
-		
-			writer.write("null");
-		}
-	}
-	
-	@Override
-	public void writeJSONString(Writer writer) throws IOException {
-		
-		JSONArray.writeJSONString(this, writer);
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(byte[] array, Writer writer) throws IOException {
-		
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(short[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(int[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(long[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(float[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(double[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(boolean[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final void writeJSONString(char[] array, Writer writer) throws IOException {
-
-		if(array == null) {
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			writer.write(""+ array[0]);
-			
-			for(int index = 1; index < array.length; index++) {
-				
-				writer.write(",");
-				writer.write("" + array[index]);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-    /**
-     * Encode an array into JSON text and write it to a {@linkplain Writer}.
-     * @see de.ralleytn.simple.json.JSONValue#writeJSONString(Object, Writer)
-     * @param array the array which should be written on the {@linkplain Writer}
-     * @param writer the {@linkplain Writer} to write to
-     * @param <T> type of the array
-     * @throws IOException if an I/O error occurs
-     * @since 1.0.0
-     */
-	public static final <T>void writeJSONString(T[] array, Writer writer) throws IOException {
-		
-		if(array == null){
-			
-			writer.write("null");
-			
-		} else if(array.length == 0) {
-			
-			writer.write("[]");
-			
-		} else {
-			
-			writer.write("[");
-			JSONValue.writeJSONString(array[0], writer);
-			
-			for(int i = 1; i < array.length; i++){
-				
-				writer.write(",");
-				JSONValue.writeJSONString(array[i], writer);
-			}
-			
-			writer.write("]");
-		}
-	}
-	
-	/**
-	 * Convert a {@linkplain Collection} to JSON text. The result is a JSON array. 
-	 * If this {@linkplain Collection} is also a {@linkplain JSONAware}, {@linkplain JSONAware} specific behaviors will be omitted at this top level.
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param collection the {@linkplain Collection} to convert
-	 * @return JSON text, or "null" if the {@linkplain Collection} is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(Collection<?> collection) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(collection, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(byte[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(short[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(int[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(long[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(float[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(double[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(boolean[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final String toJSONString(char[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	/**
-	 * Convert an array to JSON text. The result is a JSON array. 
-	 * @see de.ralleytn.simple.json.JSONValue#toJSONString(Object)
-	 * @param array the array to convert
-	 * @param <T> type of the array
-	 * @return JSON text, or "null" if array is {@code null}.
-	 * @since 1.0.0
-	 */
-	public static final <T>String toJSONString(T[] array) {
-
-		try(StringWriter writer = new StringWriter()) {
-			
-			JSONArray.writeJSONString(array, writer);
-			return writer.toString();
-			
-		} catch(IOException exception){
-
-			throw new RuntimeException(exception);
-		}
-	}
-	
-	@Override
-	public String toJSONString(){
-		
-		return JSONArray.toJSONString(this);
+		Util.write(this, writer);
 	}
 
 	/**
-	 * @return a {@linkplain String} representation of this {@linkplain JSONArray}. This is equivalent to calling {@link JSONArray#toJSONString()}.
+	 * Converts this {@linkplain JSONArray} to a JSON string.
+	 * @return this {@linkplain JSONArray} as a JSON string
 	 * @since 1.0.0
 	 */
 	@Override
 	public String toString() {
 		
-		return this.toJSONString();
+		try(StringWriter writer = new StringWriter()) {
+			
+			Util.write(this, writer);
+			return writer.toString();
+			
+		} catch(IOException exception) {
+
+			// WILL NEVER HAPPEN!
+			// DO NOTHING!
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		
+		if(object != null) {
+			
+			if(object instanceof Collection) {
+				
+				Collection<?> collection = (Collection<?>)object;
+				
+				if(collection.size() == this.size()) {
+					
+					int index = 0;
+					
+					for(Object element : collection) {
+						
+						if(!((element == null && this.get(index) == null) || this.get(index).equals(element))) {
+							
+							return false;
+						}
+						
+						index++;
+					}
+					
+					return true;
+				}
+				
+			} else if(object.getClass().isArray()) {
+				
+				int length = Array.getLength(object);
+				
+				if(length == this.size()) {
+					
+					for(int index = 0; index < length; index++) {
+						
+						Object element = Array.get(object, index);
+
+						if(!((element == null && this.get(index) == null) || element.equals(this.get(index)))) {
+							
+							return false;
+						}
+					}
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
 	 * If the value is a {@linkplain JSONObject} already, it will be casted and returned.
-	 * If the value is a {@linkplain Map}, it will be wrapped in a {@linkplain JSONObject}. The wrapped {@linkplain Map} will be returned.
+	 * If the value is a {@linkplain Map}, it will be wrapped in a {@linkplain JSONObject}. The wrapped {@linkplain JSONObject} will be returned.
 	 * In any other case this method returns {@code null}.
 	 * @param index index of the value
 	 * @return a {@code JSONObject} or {@code null}
@@ -981,13 +510,13 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public JSONObject getObject(int index) {
 		
-		return JSONValue.getObject(this.get(index));
+		return Util.getObject(this.get(index));
 	}
 	
 	/**
 	 * If the value already is a {@linkplain JSONArray}, it will be casted and returned.
 	 * If the value is an array or {@linkplain Collection}, it will be wrapped in a {@linkplain JSONArray}.
-	 * The result is returned.
+	 * The {@linkplain JSONArray} will be returned.
 	 * In any other case this method returns {@code null}.
 	 * @param index index of the value
 	 * @return a {@linkplain JSONArray} or {@code null}
@@ -995,13 +524,14 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public JSONArray getArray(int index) {
 		
-		return JSONValue.getArray(this.get(index));
+		return Util.getArray(this.get(index));
 	}
 	
 	/**
 	 * If the value is already a {@linkplain Boolean}, it will be casted and returned.
 	 * If the value is a {@linkplain String}, it will be parsed. The result is returned.
 	 * If the value is a {@linkplain Number}, this method will return {@code true} in case its {@code long} value is {@code 1}.
+	 * It will return {@code false} if it is a number but the {@code long} value is <u>not</u> {@code 1}.
 	 * In any other case this method returns {@code null}.
 	 * @param index index of the value
 	 * @return a {@linkplain Boolean} or {@code null}
@@ -1009,7 +539,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Boolean getBoolean(int index) {
 		
-		return JSONValue.getBoolean(this.get(index));
+		return Util.getBoolean(this.get(index));
 	}
 	
 	/**
@@ -1023,7 +553,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Byte getByte(int index) {
 		
-		return JSONValue.getByte(this.get(index));
+		return Util.getByte(this.get(index));
 	}
 	
 	/**
@@ -1037,7 +567,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Short getShort(int index) {
 		
-		return JSONValue.getShort(this.get(index));
+		return Util.getShort(this.get(index));
 	}
 	
 	/**
@@ -1051,7 +581,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Integer getInteger(int index) {
 		
-		return JSONValue.getInteger(this.get(index));
+		return Util.getInteger(this.get(index));
 	}
 	
 	/**
@@ -1065,7 +595,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Long getLong(int index) {
 		
-		return JSONValue.getLong(this.get(index));
+		return Util.getLong(this.get(index));
 	}
 	
 	/**
@@ -1079,7 +609,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Float getFloat(int index) {
 		
-		return JSONValue.getFloat(this.get(index));
+		return Util.getFloat(this.get(index));
 	}
 	
 	/**
@@ -1093,7 +623,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Double getDouble(int index) {
 		
-		return JSONValue.getDouble(this.get(index));
+		return Util.getDouble(this.get(index));
 	}
 	
 	/**
@@ -1105,7 +635,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public String getString(int index) {
 		
-		return JSONValue.getString(this.get(index));
+		return Util.getString(this.get(index));
 	}
 
 	/**
@@ -1121,7 +651,7 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 */
 	public Date getDate(int index, DateFormat format) throws ParseException {
 		
-		return JSONValue.getDate(this.get(index), format);
+		return Util.getDate(this.get(index), format);
 	}
 	
 	/**
@@ -1134,10 +664,9 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	 * @return an {@linkplain Enum} or {@code null}
 	 * @since 1.0.0
 	 */
-	@SuppressWarnings("rawtypes")
-	public <T extends Enum>T getEnum(int index, Class<T> type) {
+	public <T extends Enum<T>>T getEnum(int index, Class<T> type) {
 		
-		return JSONValue.getEnum(this.get(index), type);
+		return Util.getEnum(this.get(index), type);
 	}
 
 	/**
@@ -1311,8 +840,128 @@ public class JSONArray extends ArrayList<Object> implements JSONAware, JSONStrea
 	}
 	
 	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code byte} array.
+	 * @return a primitive {@code byte} array
+	 * @since 2.0.0
+	 */
+	public byte[] toPrimitiveByteArray() {
+		
+		byte[] array = new byte[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getByte(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code short} array.
+	 * @return a primitive {@code short} array
+	 * @since 2.0.0
+	 */
+	public short[] toPrimitiveShortArray() {
+		
+		short[] array = new short[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getShort(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code int} array.
+	 * @return a primitive {@code int} array
+	 * @since 2.0.0
+	 */
+	public int[] toPrimitiveIntArray() {
+		
+		int[] array = new int[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getInteger(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code long} array.
+	 * @return a primitive {@code long} array
+	 * @since 2.0.0
+	 */
+	public long[] toPrimitiveLongArray() {
+		
+		long[] array = new long[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getLong(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code float} array.
+	 * @return a primitive {@code float} array
+	 * @since 2.0.0
+	 */
+	public float[] toPrimitiveFloatArray() {
+		
+		float[] array = new float[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getFloat(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code double} array.
+	 * @return a primitive {@code double} array
+	 * @since 2.0.0
+	 */
+	public double[] toPrimitiveDoubleArray() {
+		
+		double[] array = new double[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getDouble(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a primitive {@code boolean} array.
+	 * @return a primitive {@code boolean} array
+	 * @since 2.0.0
+	 */
+	public boolean[] toPrimitiveBooleanArray() {
+		
+		boolean[] array = new boolean[this.size()];
+		
+		for(int index = 0; index < array.length; index++) {
+			
+			array[index] = this.getBoolean(index);
+		}
+		
+		return array;
+	}
+	
+	/**
+	 * Converts this {@linkplain JSONArray} to a XML string.
 	 * @param rootName name of the root element
-	 * @return this JSON array as XML
+	 * @return this JSON array as a XML string
 	 * @since 1.1.0
 	 */
 	public String toXML(String rootName) {
